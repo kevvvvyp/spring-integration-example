@@ -1,2 +1,2 @@
 # spring-integration-example
-Spring Boot &amp; Integration example using HTTP inbound/outbound gateways
+Example application using Spring Boot & Spring Integration with HTTP inbound/outbound gateways
