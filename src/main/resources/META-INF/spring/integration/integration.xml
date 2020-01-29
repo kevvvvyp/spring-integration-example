@@ -9,17 +9,23 @@
 		http://www.springframework.org/schema/integration/http https://www.springframework.org/schema/integration/http/spring-integration-http.xsd">
 
     <int-http:inbound-channel-adapter
-            id="inboundGateway"
+            id="inboundAdapter"
             supported-methods="POST"
-            request-payload-type="com.kevvvvyp.springintegrationexample.AccountRequest"
+            request-payload-type="com.kevvvvyp.springintegrationexample.pojo.request.AccountRequest"
             message-converters="mappingJackson2HttpMessageConverter"
             merge-with-default-converters="false"
             path="/createPerson">
         <int-http:request-mapping consumes="application/json"/>
     </int-http:inbound-channel-adapter>
 
+    <int:transformer id="inputValidator"
+                     input-channel="inboundAdapter"
+                     output-channel="lookupChannel"
+                     ref="accountManager"
+                     method="validation"/>
+
     <int:service-activator id="accountService"
-                           input-channel="inboundGateway"
+                           input-channel="lookupChannel"
                            ref="accountManager"
                            method="accountLookup"
                            output-channel="processingInChannel"/>
@@ -37,14 +43,21 @@
                                        http-method="POST">
 
         <int-http:request-handler-advice-chain>
-            <int:retry-advice max-attempts="3">
-                <int:fixed-back-off interval="1000"/>
-            </int:retry-advice>
+            <bean class="org.springframework.integration.handler.advice.RequestHandlerRetryAdvice">
+                <property name="retryTemplate" ref="retryTemplate"/>
+            </bean>
         </int-http:request-handler-advice-chain>
     </int-http:outbound-channel-adapter>
 
 
     <!-- ================ Channels/Loggers ===============-->
+    <int:channel id="lookupChannel">
+        <int:dispatcher task-executor="taskExecutor"/>
+        <int:interceptors>
+            <int:wire-tap channel="lookupChannelLogger"/>
+        </int:interceptors>
+    </int:channel>
+
     <int:channel id="processingInChannel">
         <int:interceptors>
             <int:wire-tap channel="processingInLogger"/>
@@ -68,4 +81,10 @@
             level="INFO"
             log-full-message="true"
             logger-name="WIRETAP.PROCESSING-OUT"/>
+
+    <int:logging-channel-adapter
+            id="lookupChannelLogger"
+            level="INFO"
+            log-full-message="true"
+            logger-name="WIRETAP.REQUEST-RECEIVED"/>
 </beans>

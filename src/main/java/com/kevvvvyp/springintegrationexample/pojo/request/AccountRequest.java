@@ -1,4 +1,4 @@
-package com.kevvvvyp.springintegrationexample;
+package com.kevvvvyp.springintegrationexample.pojo.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

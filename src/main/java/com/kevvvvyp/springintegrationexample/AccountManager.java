@@ -1,5 +1,7 @@
 package com.kevvvvyp.springintegrationexample;
 
+import com.kevvvvyp.springintegrationexample.pojo.dao.Account;
+import com.kevvvvyp.springintegrationexample.pojo.request.AccountRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Component;
@@ -16,5 +18,10 @@ public class AccountManager {
     public Account processing(@Payload Account account) {
         log.info("Received account for processing: {}", account);
         return account;
+    }
+
+    public AccountRequest validation(@Payload AccountRequest request) {
+        log.info("Received request for validation: {}", request);
+        return request;
     }
 }
