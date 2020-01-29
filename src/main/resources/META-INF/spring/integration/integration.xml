@@ -40,6 +40,7 @@
     <int-http:outbound-channel-adapter id="outboundGateway"
                                        channel="processingOutChannel"
                                        url="http://localhost:9050/notify"
+                                       rest-template="restTemplate"
                                        http-method="POST">
 
         <int-http:request-handler-advice-chain>

@@ -4,3 +4,22 @@ logging:
     com.kevvvvyp.springintegrationexample: info
     org.springframework.integration: info
     org.springframework.integration.endpoint: info
+
+application:
+  retryTemplate:
+    fixedBackOff: 1s
+    maxRetries: 3
+  restTemplate:
+    readTimeout: 15s
+    connectTimeout: 15s
+
+spring:
+  task:
+    execution:
+      pool:
+        core-size: 8
+        keep-alive: 60s
+        allow-core-thread-timeout: true
+        #max-size: ??
+        #queue-capacity: ??
+      thread-name-prefix: task
