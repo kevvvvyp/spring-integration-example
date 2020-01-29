@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:int="http://www.springframework.org/schema/integration"
+       xmlns:int-http="http://www.springframework.org/schema/integration/http"
+       xmlns="http://www.springframework.org/schema/beans"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans https://www.springframework.org/schema/beans/spring-beans.xsd
+
+		http://www.springframework.org/schema/integration https://www.springframework.org/schema/integration/spring-integration.xsd
+		http://www.springframework.org/schema/integration/http https://www.springframework.org/schema/integration/http/spring-integration-http.xsd">
+
+    <int-http:inbound-channel-adapter
+            id="inboundGateway"
+            supported-methods="POST"
+            request-payload-type="com.kevvvvyp.springintegrationexample.AccountRequest"
+            message-converters="mappingJackson2HttpMessageConverter"
+            merge-with-default-converters="false"
+            path="/createPerson">
+        <int-http:request-mapping consumes="application/json"/>
+    </int-http:inbound-channel-adapter>
+
+    <int:service-activator id="accountService"
+                           input-channel="inboundGateway"
+                           ref="accountManager"
+                           method="accountLookup"
+                           output-channel="processingInChannel"/>
+
+    <int:transformer id="processingTransformer"
+                     input-channel="processingInChannel"
+                     output-channel="processingOutChannel"
+                     ref="accountManager"
+                     method="processing">
+    </int:transformer>
+
+    <int-http:outbound-channel-adapter id="outboundGateway"
+                                       channel="processingOutChannel"
+                                       url="http://localhost:9050/notify"
+                                       http-method="POST">
+
+        <int-http:request-handler-advice-chain>
+            <int:retry-advice max-attempts="3">
+                <int:fixed-back-off interval="1000"/>
+            </int:retry-advice>
+        </int-http:request-handler-advice-chain>
+    </int-http:outbound-channel-adapter>
+
+
+    <!-- ================ Channels/Loggers ===============-->
+    <int:channel id="processingInChannel">
+        <int:interceptors>
+            <int:wire-tap channel="processingInLogger"/>
+        </int:interceptors>
+    </int:channel>
+
+    <int:channel id="processingOutChannel">
+        <int:interceptors>
+            <int:wire-tap channel="processingOutLogger"/>
+        </int:interceptors>
+    </int:channel>
+
+    <int:logging-channel-adapter
+            id="processingInLogger"
+            level="INFO"
+            log-full-message="true"
+            logger-name="WIRETAP.PROCESSING-IN"/>
+
+    <int:logging-channel-adapter
+            id="processingOutLogger"
+            level="INFO"
+            log-full-message="true"
+            logger-name="WIRETAP.PROCESSING-OUT"/>
+</beans>

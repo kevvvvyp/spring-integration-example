@@ -19,9 +19,16 @@ repositories {
 }
 
 dependencies {
-	implementation 'org.springframework.boot:spring-boot-starter-integration'
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+
+	implementation ('org.springframework.boot:spring-boot-starter-integration') {
+		exclude group:'com.vaadin.external.google:android-json'
+	}
+	implementation 'org.springframework.integration:spring-integration-http'
+
 	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'
+
 	testImplementation('org.springframework.boot:spring-boot-starter-test') {
 		exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
 	}

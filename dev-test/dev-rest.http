@@ -1,0 +1,15 @@
+# Todo
+###
+POST http://{{host}}:{{port}}/createPerson
+Content-Type: application/json
+Accept: application/json
+
+{
+  "number": 12345678
+}
+
+> {%
+    client.assert(response.status === 200);
+%}
+
+###
