@@ -43,6 +43,9 @@ public class ApplicationProperties {
 
         @NotNull
         private Duration readTimeout;
+
+        @NotNull
+        private String outboundUrl;
     }
 }
 

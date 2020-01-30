@@ -1,25 +1,65 @@
-server.port: 8080
+######################################################################
+# Application Properties
+#
+# RetryTemplate - Configuration for retrying REST request.
+# RestTemplate - Configuration for exchanging via REST
+######################################################################
+application:
+  retryTemplate:
+    fixedBackOff: 1s # Fixed period of time between REST retries
+    maxRetries: 3 # Maximum number of outgoing REST retries. E.g. if set to 3 at total of 4 requests might be attempted.
+  restTemplate:
+    readTimeout: 15s # The amount of time the app should wait on a REST response before timing out
+    connectTimeout: 15s # The amount of time the app should wait on a connection before timing out
+    outboundUrl: "http://localhost:9050/notify"  # Url to send outbound REST requests to
+
+######################################################################
+# Logging Properties
+#
+# Level - Level of logging set by package, can be INFO, DEBUG WARN
+#         or ERROR. (Should probably be set to ERROR in a production
+#         environment.
+######################################################################
 logging:
   level:
     com.kevvvvyp.springintegrationexample: info
     org.springframework.integration: info
     org.springframework.integration.endpoint: info
 
-application:
-  retryTemplate:
-    fixedBackOff: 1s
-    maxRetries: 3
-  restTemplate:
-    readTimeout: 15s
-    connectTimeout: 15s
+######################################################################
+# Management Properties
+#
+# Endpoints - Configuration for Spring Boot production ready features
+# Ref - https://docs.spring.io/spring-boot/docs/current/reference/html/production-ready-features.html
+######################################################################
+management:
+  endpoints:
+    web.exposure.include: ["health", "info", "metrics"] # Whitelist all endpoints accessible via web
+    jmx.exposure.include: ["health", "info", "metrics"] # Whitelist all endpoints accessible via jmx
 
+######################################################################
+# Sever Properties
+#
+# Port - Port number for application.
+#
+#  N.b Please confirm with development which embedded server is in use
+#  e.g. Tomcat, Netty, Jetty etc.
+######################################################################
+server:
+  port: 8080
+
+######################################################################
+# Spring Properties
+#
+# Task.Execution - Thread configuration
+######################################################################
 spring:
   task:
     execution:
       pool:
-        core-size: 8
-        keep-alive: 60s
-        allow-core-thread-timeout: true
-        #max-size: ??
-        #queue-capacity: ??
-      thread-name-prefix: task
+        core-size: 8 # Core number of threads
+        keep-alive: 60s # Amount of time to keep an idle thread alive before destruction
+        allow-core-thread-timeout: true # Are core threads are allowed to time out. This enables dynamic growing and shrinking of the pool.
+        #max-size: ?? # Maximum allowed number of threads. If tasks are filling up the queue, the pool can expand up to that size to accommodate the load. Ignored if the queue is unbounded
+        #queue-capacity: ?? # Queue capacity. An unbounded capacity does not increase the pool and therefore ignores the "max-size" property.
+      thread-name-prefix: task # Prefix to use for the names of newly created threads.

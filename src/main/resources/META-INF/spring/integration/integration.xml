@@ -39,7 +39,7 @@
 
     <int-http:outbound-channel-adapter id="outboundGateway"
                                        channel="processingOutChannel"
-                                       url="http://localhost:9050/notify"
+                                       url="${application.restTemplate.outboundUrl}"
                                        rest-template="restTemplate"
                                        http-method="POST">
 

@@ -1,0 +1,40 @@
+###
+# Health
+GET http://{{host}}:{{port}}/actuator/health
+Content-Type: application/json
+Accept: application/json
+
+{
+}
+
+> {%
+    client.assert(response.status === 200);
+%}
+
+###
+# Info
+GET http://{{host}}:{{port}}/actuator/info
+Content-Type: application/json
+Accept: application/json
+
+{
+}
+
+> {%
+    client.assert(response.status === 200);
+%}
+
+###
+# Metrics
+GET http://{{host}}:{{port}}/actuator/metrics
+Content-Type: application/json
+Accept: application/json
+
+{
+}
+
+> {%
+    client.assert(response.status === 200);
+%}
+
+###

@@ -9,6 +9,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.web.client.RestTemplate;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.time.Duration;
 
 @Slf4j
@@ -18,10 +20,11 @@ public class RestTemplateConfiguration {
     @Bean
     public RestTemplate restTemplate(@NonNull final ApplicationProperties applicationProperties,
                                      @NonNull final RestTemplateBuilder restTemplateBuilder,
-                                     @NonNull final MappingJackson2HttpMessageConverter mappingJackson2HttpMessageConverter) {
+                                     @NonNull final MappingJackson2HttpMessageConverter mappingJackson2HttpMessageConverter) throws MalformedURLException {
 
         final Duration readTimeout = applicationProperties.getRestTemplate().getReadTimeout();
         final Duration connectTimeout = applicationProperties.getRestTemplate().getConnectTimeout();
+        final URL outboundUrl = new URL(applicationProperties.getRestTemplate().getOutboundUrl());
 
         final RestTemplate restTemplate = restTemplateBuilder
                 .setReadTimeout(readTimeout)
@@ -29,9 +32,10 @@ public class RestTemplateConfiguration {
                 .additionalMessageConverters(mappingJackson2HttpMessageConverter)
                 .build();
 
-        log.info("RestTemplate configuration: readTimeout={}ms, connectTimeout={}ms",
+        log.info("RestTemplate configuration: readTimeout={}ms, connectTimeout={}ms, outboundUrl={}",
                 readTimeout.toMillis(),
-                connectTimeout.toMillis());
+                connectTimeout.toMillis(),
+                outboundUrl);
 
         return restTemplate;
     }
