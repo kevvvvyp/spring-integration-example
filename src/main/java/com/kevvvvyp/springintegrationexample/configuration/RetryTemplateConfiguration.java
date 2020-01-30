@@ -1,6 +1,8 @@
 package com.kevvvvyp.springintegrationexample.configuration;
 
 import com.kevvvvyp.springintegrationexample.properties.ApplicationProperties;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
@@ -21,8 +23,8 @@ public class RetryTemplateConfiguration {
     @Bean
     public RetryTemplate retryTemplate(@NonNull final ApplicationProperties applicationProperties) {
         //Todo validation
-        final int maxAttempts = applicationProperties.getRetryTemplate().getMaxRetries();
-        final Duration fixedBackOff = applicationProperties.getRetryTemplate().getFixedBackOff();
+        final int maxAttempts = getMaxRetries(applicationProperties);
+        final Duration fixedBackOff = getFixedBackOff(applicationProperties);
 
         final FixedBackOffPolicy backOffPolicy = new FixedBackOffPolicy();
         backOffPolicy.setBackOffPeriod(fixedBackOff.toMillis());
@@ -38,7 +40,17 @@ public class RetryTemplateConfiguration {
         return retryTemplate;
     }
 
+    int getMaxRetries(ApplicationProperties applicationProperties) {
+        return applicationProperties.getRetryTemplate().getMaxRetries();
+    }
+
+    Duration getFixedBackOff(ApplicationProperties applicationProperties) {
+        return applicationProperties.getRetryTemplate().getFixedBackOff();
+    }
+
+    @Data
     @Slf4j
+    @EqualsAndHashCode(callSuper = true)
     static class CustomRetryPolicy extends SimpleRetryPolicy {
         @Override
         public void close(RetryContext status) {

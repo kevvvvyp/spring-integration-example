@@ -22,9 +22,9 @@ public class RestTemplateConfiguration {
                                      @NonNull final RestTemplateBuilder restTemplateBuilder,
                                      @NonNull final MappingJackson2HttpMessageConverter mappingJackson2HttpMessageConverter) throws MalformedURLException {
 
-        final Duration readTimeout = applicationProperties.getRestTemplate().getReadTimeout();
-        final Duration connectTimeout = applicationProperties.getRestTemplate().getConnectTimeout();
-        final URL outboundUrl = new URL(applicationProperties.getRestTemplate().getOutboundUrl());
+        final Duration readTimeout = this.getReadTimeout(applicationProperties);
+        final Duration connectTimeout = this.getConnectionTimeout(applicationProperties);
+        final URL outboundUrl = new URL(this.getOutboundUrl(applicationProperties));
 
         final RestTemplate restTemplate = restTemplateBuilder
                 .setReadTimeout(readTimeout)
@@ -35,8 +35,20 @@ public class RestTemplateConfiguration {
         log.info("RestTemplate configuration: readTimeout={}ms, connectTimeout={}ms, outboundUrl={}",
                 readTimeout.toMillis(),
                 connectTimeout.toMillis(),
-                outboundUrl);
+                outboundUrl.toString());
 
         return restTemplate;
+    }
+
+    Duration getReadTimeout(ApplicationProperties applicationProperties) {
+        return applicationProperties.getRestTemplate().getReadTimeout();
+    }
+
+    Duration getConnectionTimeout(ApplicationProperties applicationProperties) {
+        return applicationProperties.getRestTemplate().getConnectTimeout();
+    }
+
+    String getOutboundUrl(ApplicationProperties applicationProperties) {
+        return applicationProperties.getRestTemplate().getOutboundUrl();
     }
 }
