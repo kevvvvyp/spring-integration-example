@@ -16,6 +16,9 @@ import java.time.Duration;
 @ConfigurationProperties(prefix = "application", ignoreUnknownFields = false)
 public class ApplicationProperties {
 
+    private static final String MISSING_MSG = "Missing property";
+    private static final String OUT_OF_BOUNDS = "Property was out of bounds";
+
     @Valid
     private final ApplicationProperties.RetryTemplate retryTemplate = new RetryTemplate();
 
@@ -26,11 +29,11 @@ public class ApplicationProperties {
     @NoArgsConstructor
     public static class RetryTemplate {
 
-        @NotNull
+        @NotNull(message = MISSING_MSG)
         private Duration fixedBackOff;
 
-        @Min(0)
-        @Max(Integer.MAX_VALUE)
+        @Min(value = 0, message = OUT_OF_BOUNDS)
+        @Max(value = Integer.MAX_VALUE, message = OUT_OF_BOUNDS)
         private int maxRetries;
     }
 
@@ -38,13 +41,13 @@ public class ApplicationProperties {
     @NoArgsConstructor
     public static class RestTemplate {
 
-        @NotNull
+        @NotNull(message = MISSING_MSG)
         private Duration connectTimeout;
 
-        @NotNull
+        @NotNull(message = MISSING_MSG)
         private Duration readTimeout;
 
-        @NotNull
+        @NotNull(message = MISSING_MSG)
         private String outboundUrl;
     }
 }
