@@ -25,6 +25,8 @@ logging:
     com.kevvvvyp.springintegrationexample: info
     org.springframework.integration: info
     org.springframework.integration.endpoint: info
+    org.springframework.web: debug
+
 
 ######################################################################
 # Management Properties

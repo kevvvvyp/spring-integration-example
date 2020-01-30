@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.web.client.RestTemplate;
 
@@ -20,6 +21,7 @@ public class RestTemplateConfiguration {
     @Bean
     public RestTemplate restTemplate(@NonNull final ApplicationProperties applicationProperties,
                                      @NonNull final RestTemplateBuilder restTemplateBuilder,
+                                     @NonNull final StringHttpMessageConverter stringHttpMessageConverter,
                                      @NonNull final MappingJackson2HttpMessageConverter mappingJackson2HttpMessageConverter) throws MalformedURLException {
 
         final Duration readTimeout = this.getReadTimeout(applicationProperties);
@@ -29,6 +31,7 @@ public class RestTemplateConfiguration {
         final RestTemplate restTemplate = restTemplateBuilder
                 .setReadTimeout(readTimeout)
                 .setConnectTimeout(connectTimeout)
+                .additionalMessageConverters(stringHttpMessageConverter)
                 .additionalMessageConverters(mappingJackson2HttpMessageConverter)
                 .build();
 

@@ -10,16 +10,18 @@
 
     <int-http:inbound-channel-adapter
             id="inboundAdapter"
+            channel="inboundRequestChannel"
             supported-methods="POST"
             request-payload-type="com.kevvvvyp.springintegrationexample.pojo.request.AccountRequest"
             message-converters="mappingJackson2HttpMessageConverter"
             merge-with-default-converters="false"
+            header-mapper="defaultHeaderMapper"
             path="/createPerson">
         <int-http:request-mapping consumes="application/json"/>
     </int-http:inbound-channel-adapter>
 
     <int:transformer id="inputValidator"
-                     input-channel="inboundAdapter"
+                     input-channel="inboundRequestChannel"
                      output-channel="lookupChannel"
                      ref="accountManager"
                      method="validation"/>
@@ -37,10 +39,19 @@
                      method="processing">
     </int:transformer>
 
-    <int-http:outbound-channel-adapter id="outboundGateway"
-                                       channel="processingOutChannel"
+    <int:transformer id="outboundRequestTransformer"
+                     input-channel="processingOutChannel"
+                     output-channel="outboundRequestChannel"
+                     ref="accountManager"
+                     method="createRequest">
+    </int:transformer>
+
+    <int-http:outbound-channel-adapter id="outboundAdapter"
+                                       channel="outboundRequestChannel"
                                        url="${application.restTemplate.outboundUrl}"
                                        rest-template="restTemplate"
+                                       header-mapper="defaultHeaderMapper"
+                                       extract-payload="true"
                                        http-method="POST">
 
         <int-http:request-handler-advice-chain>
@@ -52,6 +63,13 @@
 
 
     <!-- ================ Channels/Loggers ===============-->
+    <int:channel id="inboundRequestChannel">
+        <int:dispatcher task-executor="taskExecutor"/>
+        <int:interceptors>
+            <int:wire-tap channel="inboundRequestLogger"/>
+        </int:interceptors>
+    </int:channel>
+
     <int:channel id="lookupChannel">
         <int:dispatcher task-executor="taskExecutor"/>
         <int:interceptors>
@@ -71,6 +89,24 @@
         </int:interceptors>
     </int:channel>
 
+    <int:channel id="outboundRequestChannel">
+        <int:interceptors>
+            <int:wire-tap channel="outboundRequestLogger"/>
+        </int:interceptors>
+    </int:channel>
+
+    <int:logging-channel-adapter
+            id="inboundRequestLogger"
+            level="INFO"
+            log-full-message="true"
+            logger-name="WIRETAP.REQUEST-IN"/>
+
+    <int:logging-channel-adapter
+            id="lookupChannelLogger"
+            level="INFO"
+            log-full-message="true"
+            logger-name="WIRETAP.LOOKUP-SERVICE"/>
+
     <int:logging-channel-adapter
             id="processingInLogger"
             level="INFO"
@@ -84,8 +120,8 @@
             logger-name="WIRETAP.PROCESSING-OUT"/>
 
     <int:logging-channel-adapter
-            id="lookupChannelLogger"
+            id="outboundRequestLogger"
             level="INFO"
             log-full-message="true"
-            logger-name="WIRETAP.REQUEST-RECEIVED"/>
+            logger-name="WIRETAP.REQUEST-OUT"/>
 </beans>
