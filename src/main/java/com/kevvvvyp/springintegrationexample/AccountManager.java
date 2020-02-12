@@ -1,7 +1,7 @@
 package com.kevvvvyp.springintegrationexample;
 
-import com.kevvvvyp.springintegrationexample.pojo.dao.Account;
-import com.kevvvvyp.springintegrationexample.pojo.request.AccountRequest;
+import com.kevvvvyp.springintegrationexample.pojo.Account;
+import com.kevvvvyp.springintegrationexample.pojo.AccountRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -14,6 +14,10 @@ import org.springframework.stereotype.Component;
 @Component
 public class AccountManager {
 
+    public AccountRequest validation(@Payload AccountRequest request) {
+        return request;
+    }
+
     public Account accountLookup(@Payload AccountRequest accountRequest) {
         return new Account("Joe Bloggs", accountRequest.getNumber(), 300.0);
     }
@@ -22,15 +26,17 @@ public class AccountManager {
         return account;
     }
 
-    public AccountRequest validation(@Payload AccountRequest request) {
-        return request;
-    }
 
-    public Message<String> createRequest(Message<Account> message) {
-        return MessageBuilder.withPayload("Found account")
+    public Message<String> createResponse(Message<Account> message) {
+        return MessageBuilder.withPayload("Account created")
                 .setHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
                 .setHeader(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE)
                 .setHeader(HttpHeaders.ACCEPT_CHARSET, "UTF-8")
                 .build();
+    }
+
+    public String postReply(Message<String> message) {
+        log.info("Reply sent");
+        return "test";
     }
 }

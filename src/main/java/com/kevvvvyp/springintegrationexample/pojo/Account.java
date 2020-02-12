@@ -1,4 +1,4 @@
-package com.kevvvvyp.springintegrationexample.pojo.dao;
+package com.kevvvvyp.springintegrationexample.pojo;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

@@ -1,6 +1,6 @@
 # Todo
 ###
-POST http://{{host}}:{{port}}/createPerson
+POST http://{{host}}:{{port}}/createAccount
 Content-Type: application/json
 Accept: application/json
 

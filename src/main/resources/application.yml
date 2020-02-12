@@ -1,17 +1,8 @@
 ######################################################################
 # Application Properties
 #
-# RetryTemplate - Configuration for retrying REST request.
-# RestTemplate - Configuration for exchanging via REST
 ######################################################################
 application:
-  retryTemplate:
-    fixedBackOff: 1s # Fixed period of time between REST retries
-    maxRetries: 3 # Maximum number of outgoing REST retries. E.g. if set to 3 at total of 4 requests might be attempted.
-  restTemplate:
-    readTimeout: 15s # The amount of time the app should wait on a REST response before timing out
-    connectTimeout: 15s # The amount of time the app should wait on a connection before timing out
-    outboundUrl: "http://localhost:9050/notify"  # Url to send outbound REST requests to
 
 ######################################################################
 # Logging Properties

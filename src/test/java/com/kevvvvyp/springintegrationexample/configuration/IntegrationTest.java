@@ -1,6 +1,6 @@
 package com.kevvvvyp.springintegrationexample.configuration;
 
-import com.kevvvvyp.springintegrationexample.pojo.request.AccountRequest;
+import com.kevvvvyp.springintegrationexample.pojo.AccountRequest;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
