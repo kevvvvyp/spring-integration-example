@@ -26,6 +26,9 @@ logging:
 # Ref - https://docs.spring.io/spring-boot/docs/current/reference/html/production-ready-features.html
 ######################################################################
 management:
+  endpoint:
+    health:
+      show-details: "ALWAYS"
   endpoints:
     web.exposure.include: ["health", "info", "metrics"] # Whitelist all endpoints accessible via web
     jmx.exposure.include: ["health", "info", "metrics"] # Whitelist all endpoints accessible via jmx
@@ -47,6 +50,16 @@ server:
 # Task.Execution - Thread configuration
 ######################################################################
 spring:
+  application:
+    name: spring-integration-example
+  cloud:
+    kubernetes:
+      reload:
+        period: 5000
+        enabled: true
+        monitoring-config-maps: true
+        monitoring-secrets: false
+        strategy: shutdown
   task:
     execution:
       pool:
